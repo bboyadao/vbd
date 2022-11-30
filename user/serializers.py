@@ -21,7 +21,6 @@ class CallSerializer(serializers.ModelSerializer):
 		model = Call
 		fields = ["call_duration"]
 
-	@staticmethod
 	def validate_call_duration(self, val):  # noqa
 		return Call.milli_to_second(val)
 
@@ -48,8 +47,8 @@ class BillSerializer(serializers.Serializer):
 	def get_block_count(instance) -> int:
 		return instance.call_set.annotate(dur=F('duration')).annotate(
 			blocks=Case(
-				When(dur__lte=settings.SEC_PER_BLOCK, then=Value(1)),
-				When(dur__gt=settings.SEC_PER_BLOCK, then=Ceil(F('dur') / settings.SEC_PER_BLOCK)),
+				When(dur__lte=settings.SECS_PER_BLOCK, then=Value(1)),
+				When(dur__gt=settings.SECS_PER_BLOCK, then=Ceil(F('dur') / settings.SECS_PER_BLOCK)),
 				output_field=IntegerField()
 			)
 		).aggregate(Sum('blocks')).get("blocks__sum") or 0

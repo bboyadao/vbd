@@ -1,11 +1,10 @@
+import os
 from pathlib import Path
 from datetime import timedelta
 
 from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = "django-insecure-@*uf$6=26$+n^f_g_e)39^+$p+q#1(i#tp-t*7w#w3ynjey*9="
 
 DEBUG = True
 
@@ -27,7 +26,6 @@ INSTALLED_APPS += INTERNAL_APP
 
 INSTALLED_APPS += THIRD_PARTY_APPS
 
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -43,7 +41,7 @@ ROOT_URLCONF = "vin_bigdata.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -57,13 +55,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "vin_bigdata.wsgi.application"
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -91,6 +82,12 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+MEDIA_URL = "/media/"
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "user.User"
@@ -114,4 +111,28 @@ SPECTACULAR_SETTINGS = {
         reverse_lazy("schema"),
     ],
 }
-SEC_PER_BLOCK = timedelta(seconds=30).total_seconds()
+
+SECS_PER_BLOCK = 30
+
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_PORT = os.getenv("DATABASE_PORT")
+DATABASE_USER = os.getenv("DATABASE_USER")
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+
+SECRET_KEY = os.getenv("SECRET_KEY",
+                       "django-insecure-@*uf$6=26$+n^f_g_e)39^+$p+q#1(i#tp-t*7w#w3ynjey*9=")
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DATABASE_NAME,
+        "USER": DATABASE_USER,
+        "PASSWORD": DATABASE_PASSWORD,
+        "HOST": DATABASE_URL,
+        "PORT": DATABASE_PORT,
+        "TEST": {
+            "NAME": "testdb"
+        },
+    },
+}
