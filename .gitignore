@@ -1,0 +1,15 @@
+*.pyc
+storage/*
+__pycache__/
+.idea/
+**/local.py
+*.sqlite3
+
+celerybeat-schedule
+/htmlcov/
+/.mypy_cache/
+/out/
+.coverage
+/logs/api/log.json
+/logs/celery/log.json
+local.env
