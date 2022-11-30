@@ -12,4 +12,6 @@ celerybeat-schedule
 .coverage
 /logs/api/log.json
 /logs/celery/log.json
-local.env
+*.local.env
+./staticfiles
+./mediafiles
