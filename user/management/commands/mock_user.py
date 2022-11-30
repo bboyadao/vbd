@@ -7,9 +7,12 @@ class Command(BaseCommand):
     help = 'Mock user'
     RANGE = 50
 
-    def create_bulk_users(self):
+    def add_arguments(self, parser):
+        parser.add_argument('-l', '--len', type=int, help='number of user', )
+
+    def create_bulk_users(self, count):
         bulk = []
-        for i in range(1, self.RANGE):
+        for i in range(1, count):
             me = {
                 "username": f"test_user_{i}",
                 "password": make_password(f"test_user_{i}")
@@ -18,5 +21,5 @@ class Command(BaseCommand):
         return User.objects.bulk_create(bulk)
 
     def handle(self, *args, **options):
-        self.create_bulk_users()
-        self.stdout.write(self.style.SUCCESS(f"Created: {self.RANGE} Users"))
+        _len = options.get("len", self.RANGE)
+        self.create_bulk_users(_len)
